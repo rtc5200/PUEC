@@ -166,7 +166,7 @@ public int checkingPoison(int x, int y) {
     return 0;
   }
 }
-public int chekingCheckPoison(int x, int y) {
+public int checkingCheckPoison(int x, int y) {
   if (x > -1 || y > -1 || x <battleGround.length || y < battleGround.length) {
     return battleGround[x][y].poisonCheck;
   } else {

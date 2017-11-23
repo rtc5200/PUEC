@@ -114,7 +114,7 @@ AI設計のための言語は [Processing](https://processing.org/) を利用し
 自分の周囲 5 マスの攻撃した音の方角を配列で返します。  
 { 北西, 南西, 北東, 南東 } に音が聞こえたら 1 を返し、聞こえなかったら 0 を返します。
 
-`this.seachingOtherPlayer(x,y)`  
+`this.searchingOtherPlayer(x,y)`  
 自分の周囲 3 マス以内の座標を指定し、そこに敵がいるか確認します。  
 範囲外,指定されたマスが小屋、もしくは敵がいなかった場合負の値を返し、居たら正の値を返します。  
 値は `boolean` 型です。
@@ -183,3 +183,7 @@ AI設計のための言語は [Processing](https://processing.org/) を利用し
 * 鎮痛剤
   * アイテムID: 3
   * 回復量: 15
+
+* ちくわ
+  * アイテムID: 9
+  * 回復量: 5

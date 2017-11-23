@@ -222,7 +222,7 @@ void draw() {
           selectedPlayer[i].fallingAt(int(random(battleGround.length-1)), int(random(battleGround.length-1)));
           selectedPlayer[i].setHp(100);
           selectedPlayer[i].live = true;
-          selectedPlayer[i].weapon = 3;
+          selectedPlayer[i].weapon = 9;
           selectedPlayer[i].item = 9;
           selectedPlayer[i].rank = 0;
         } else {
@@ -493,4 +493,3 @@ void keyPressed() {
     break;
   }
 }
-

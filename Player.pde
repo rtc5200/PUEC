@@ -193,8 +193,9 @@ public class Player {
           } else if (battleGround[this.x ][this.y +i].structure == 1) {
               return ;
             }
-          }
-        }
+    }
+    this.reloadTime = weaponStatus[this.weapon][2];
+  }
   }
   public void shootWeaponW(int playerNumber) {
     battleGround[this.x][this.y].battleSound = 1;
@@ -211,6 +212,7 @@ public class Player {
             return ;
         }
         }
+        this.reloadTime = weaponStatus[this.weapon][2];
       }
   }
   public void shootWeaponE(int playerNumber) {
@@ -227,6 +229,7 @@ public class Player {
               return ;
           }
         }
+        this.reloadTime = weaponStatus[this.weapon][2];
       }
   }
 
@@ -258,16 +261,14 @@ public class Player {
     }
     return sound;
   }
-  boolean seachingOtherPlayer(int x, int y) {
+  boolean searchingOtherPlayer(int x, int y) {
     boolean findout = false;
-    if ( sqrt(sq(abs(this.x-x))+sq(abs(this.y-y))) >3|| battleGround[this.x][this.y].structure == 2) {
-      findout =false;
+    if ( abs(this.x-x) >3 || abs(this.y -y) > 3|| battleGround[x][y].structure == 2) {
+      findout = false;
     } else {
       for (int i = 0; i<member; i++) {
         if (selectedPlayer[i].x == x && selectedPlayer[i].y == y) {
-          findout = true;
-        } else {
-          findout = false;
+          findout = true;}
         }
       }
     }

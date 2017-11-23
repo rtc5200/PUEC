@@ -147,7 +147,7 @@ private void spreadingPoison(BattleGround[][] battleGround, int i, int j) {
 }
 
 public int checkingStructure(int x, int y) {
-  if (x > -1 && y > -1 && x < battleGround.length && y <battleGround.length) {
+  if (x > -1 || y > -1 || x < battleGround.length || y <battleGround.length) {
     return battleGround[x][y].structure;
   } else {
     return 0;
@@ -160,14 +160,14 @@ public int getBattleGroundWeapon(int x,int y){
   return battleGround[x][y].weapon;
 }
 public int checkingPoison(int x, int y) {
-  if (x > -1 && y > -1 && x <battleGround.length && y < battleGround.length) {
+  if (x > -1 || y > -1 || x <battleGround.length || y < battleGround.length) {
     return battleGround[x][y].poison ;
   } else {
     return 0;
   }
 }
-public int checkingCheckPoison(int x, int y) {
-  if (x > -1 && y > -1 && x <battleGround.length && y < battleGround.length) {
+public int chekingCheckPoison(int x, int y) {
+  if (x > -1 || y > -1 || x <battleGround.length || y < battleGround.length) {
     return battleGround[x][y].poisonCheck;
   } else {
     return 0;

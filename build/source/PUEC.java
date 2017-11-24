@@ -1015,9 +1015,34 @@ class myAI extends Player{
       if(this.getHp() < 50){
         return 7;
       }
+      if(shoot() != 0){shoot();}
       return mc.moveToNearestStructure();
     }
     return mc.moveToCenter();
+  }
+  public int shoot(){
+    if(this.searchingOtherPlayer(getX(),getY()) && getWeapon() == 9){
+      return (int)random(1,4);
+    }
+    for(int ox = -2;ox < 3;ox++){
+      for(int oy = -2;oy < 3;oy++){
+        if(this.searchingOtherPlayer(getX()+ox,getY()+oy)){
+          if(oy == 0){
+            if(ox < 0){
+              return 10;
+            }
+            return 11;
+          }
+          if(ox == 0){
+            if(oy < 0){
+              return 8;
+            }
+            return 9;
+          }
+        }
+      }
+    }
+    return 0;
   }
 }
 
@@ -1128,7 +1153,7 @@ class moveController{
     return y;
   }
   public int moveToNearestStructure(){
-    if(targetStructure == null || checkingStructure(main.getX(),main.getY()) != 0 || checkingPoison(targetStructure[0],targetStructure[1]) == 1){
+    if(!hasTarget() || checkingStructure(main.getX(),main.getY()) != 0 || checkingPoison(targetStructure[0],targetStructure[1]) == 1){
       float mindis = -1;
       int sx = 0;
       int sy = 0;
@@ -1198,7 +1223,13 @@ class moveController{
       return move(dir1);
     }
     int nowX = main.getX();int nowY = main.getY();
-    if (distance(nowX,nowY,calX(nowX,dir1),calY(nowY,dir1)) > distance(nowX,nowY,calX(nowX,dir2),calY(nowY,dir2))){
+    if (abs(distance(nowX,nowY,calX(nowX,dir1),calY(nowY,dir1)) - distance(nowX,nowY,calX(nowX,dir2),calY(nowY,dir2))) > 1){
+      if(distance(nowX,nowY,calX(nowX,dir1),calY(nowY,dir1)) > distance(nowX,nowY,calX(nowX,dir2),calY(nowY,dir2))){
+        return move(dir2);
+      }
+      return move(dir1);
+    }
+    if(random(2) == 1){
       return move(dir1);
     }
     return move(dir2);

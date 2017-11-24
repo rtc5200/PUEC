@@ -62,7 +62,7 @@ void draw() {
     background(128);
     image(backGround,0,0);
     textSize(50);
-    fill(#00FFFF);
+    fill(#FF0000);
     textAlign(CENTER, CENTER);
     imageMode(CENTER);
     image(titleLogo, width/2, height/2);

@@ -10,14 +10,16 @@ Player[] playerList;
 Player[] selectedPlayer;
 PImage[] playerIcon;
 PFont font;
+PImage titleLogo;
 static int[][] weaponStatus= {{0, 0, 0}, {20, 2, 2}, {30, 2, 3}, {25, 3, 3}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {15, 0, 0}};
 static int[] itemStatus  ={0, 10, 25, 15, 0, 0, 0, 0, 0, 5};
 
 void setup() {
   size(800, 800);
-  background(255);
+  background(128);
   frameRate(60);
   font = loadFont("IPAPGothic-32.vlw");
+  titleLogo = loadImage("PUEC_Logo.png");
   textFont(font, 32);
   battleTime = 0;
   turn = 0;
@@ -57,12 +59,13 @@ void setup() {
 
 void draw() {
   if (scene == 0 ) {
-    background(255);
+    background(128);
     textSize(50);
-    fill(#000000);
+    fill(#FFFF00);
     textAlign(CENTER, CENTER);
-    text("PUEC", width/2, height/2);
-    text("PRESS ANY KEY", width/2, height*2/3);
+    imageMode(CENTER);
+    image(titleLogo, width/2, height/3);
+    text("PRESS ANY KEY", width/2, height*5/8);
     textAlign(LEFT);
     textSize(16);
     text("version 1.2", 0, 16);
@@ -74,6 +77,7 @@ void draw() {
     stroke(0);
     background(128);
     //draw playerList
+    imageMode(CORNER);
     for (int i = 0; i < 20; i++) {
       // 上段
       if (i < 10) {

@@ -60,9 +60,8 @@ void setup() {
 void draw() {
   if (scene == 0 ) {
     background(128);
-    image(backGround,0,0);
     textSize(50);
-    fill(#FF0000);
+    fill(#FFFF00);
     textAlign(CENTER, CENTER);
     imageMode(CENTER);
     image(titleLogo, width/2, height/2);

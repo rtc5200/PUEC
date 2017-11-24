@@ -214,7 +214,9 @@ void draw() {
       }
       //マップ上のメンバーの位置の描写
       if (turn > 0) {
-        image(playerIcon[i], selectedPlayer[i].x*width/40, selectedPlayer[i].y*height/40);
+        if(scene != 0){
+          image(playerIcon[i], selectedPlayer[i].x*width/40, selectedPlayer[i].y*height/40);
+        }
       }
     }
     if (battleTime > 60 && battleTime % 600 == 0) {
@@ -494,6 +496,7 @@ void keyPressed() {
     howManySelectedPlayer = 0;
     rank = 0;
     scene = 1;
+    turn = 0;
     break;
   }
 }

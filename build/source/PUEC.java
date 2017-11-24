@@ -26,14 +26,16 @@ Player[] playerList;
 Player[] selectedPlayer;
 PImage[] playerIcon;
 PFont font;
+PImage titleLogo;
 static int[][] weaponStatus= {{0, 0, 0}, {20, 2, 2}, {30, 2, 3}, {25, 3, 3}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {0, 0, 0}, {15, 0, 0}};
 static int[] itemStatus  ={0, 10, 25, 15, 0, 0, 0, 0, 0, 5};
 
 public void setup() {
   
-  background(255);
+  background(128);
   frameRate(60);
   font = loadFont("IPAPGothic-32.vlw");
+  titleLogo = loadImage("PUEC_Logo.png");
   textFont(font, 32);
   battleTime = 0;
   turn = 0;
@@ -59,7 +61,7 @@ public void setup() {
   playerList[0] = new randomAI();
   playerList[1] = new randomAI();
   playerList[2] = new randomAI();
-  playerList[3] = new myAI();
+  playerList[5] = new myAI();
   playerList[10] = new randomAI();
   //playerList[i] = new sampleAI();
 
@@ -74,15 +76,16 @@ public void setup() {
 
 public void draw() {
   if (scene == 0 ) {
-    background(255);
+    background(128);
     textSize(50);
-    fill(0xff000000);
+    fill(0xffFFFF00);
     textAlign(CENTER, CENTER);
-    text("PUEC", width/2, height/2);
-    text("PRESS ANY KEY", width/2, height*2/3);
+    imageMode(CENTER);
+    image(titleLogo, width/2, height/3);
+    text("PRESS ANY KEY", width/2, height*5/8);
     textAlign(LEFT);
     textSize(16);
-    text("version 1.1", 0, 16);
+    text("version 1.2", 0, 16);
     battleTime = 0;
     turn = 0;
     howManySelectedPlayer = 0;
@@ -91,6 +94,7 @@ public void draw() {
     stroke(0);
     background(128);
     //draw playerList
+    imageMode(CORNER);
     for (int i = 0; i < 20; i++) {
       // \u4e0a\u6bb5
       if (i < 10) {
@@ -239,7 +243,7 @@ public void draw() {
           selectedPlayer[i].fallingAt(PApplet.parseInt(random(battleGround.length-1)), PApplet.parseInt(random(battleGround.length-1)));
           selectedPlayer[i].setHp(100);
           selectedPlayer[i].live = true;
-          selectedPlayer[i].weapon = 3;
+          selectedPlayer[i].weapon = 9;
           selectedPlayer[i].item = 9;
           selectedPlayer[i].rank = 0;
         } else {
@@ -659,7 +663,7 @@ private void spreadingPoison(BattleGround[][] battleGround, int i, int j) {
 }
 
 public int checkingStructure(int x, int y) {
-  if (x > -1 || y > -1 || x < battleGround.length || y <battleGround.length) {
+  if (x > -1 && y > -1 && x < battleGround.length && y <battleGround.length) {
     return battleGround[x][y].structure;
   } else {
     return 0;
@@ -672,14 +676,14 @@ public int getBattleGroundWeapon(int x,int y){
   return battleGround[x][y].weapon;
 }
 public int checkingPoison(int x, int y) {
-  if (x > -1 || y > -1 || x <battleGround.length || y < battleGround.length) {
+  if (x > -1 && y > -1 && x <battleGround.length && y < battleGround.length) {
     return battleGround[x][y].poison ;
   } else {
     return 0;
   }
 }
-public int chekingCheckPoison(int x, int y) {
-  if (x > -1 || y > -1 || x <battleGround.length || y < battleGround.length) {
+public int checkingCheckPoison(int x, int y) {
+  if (x > -1 && y > -1 && x <battleGround.length && y < battleGround.length) {
     return battleGround[x][y].poisonCheck;
   } else {
     return 0;
@@ -880,8 +884,9 @@ public class Player {
           } else if (battleGround[this.x ][this.y +i].structure == 1) {
               return ;
             }
-          }
-        }
+    }
+    this.reloadTime = weaponStatus[this.weapon][2];
+  }
   }
   public void shootWeaponW(int playerNumber) {
     battleGround[this.x][this.y].battleSound = 1;
@@ -898,6 +903,7 @@ public class Player {
             return ;
         }
         }
+        this.reloadTime = weaponStatus[this.weapon][2];
       }
   }
   public void shootWeaponE(int playerNumber) {
@@ -914,6 +920,7 @@ public class Player {
               return ;
           }
         }
+        this.reloadTime = weaponStatus[this.weapon][2];
       }
   }
 
@@ -945,44 +952,257 @@ public class Player {
     }
     return sound;
   }
-  public boolean seachingOtherPlayer(int x, int y) {
+  public boolean searchingOtherPlayer(int x, int y) {
     boolean findout = false;
-    if ( sqrt(sq(abs(this.x-x))+sq(abs(this.y-y))) >3|| battleGround[this.x][this.y].structure == 2) {
-      findout =false;
+    if ( abs(this.x-x) >3 || abs(this.y -y) > 3|| battleGround[x][y].structure == 2) {
+      findout = false;
     } else {
       for (int i = 0; i<member; i++) {
         if (selectedPlayer[i].x == x && selectedPlayer[i].y == y) {
+
           findout = true;
-        } else {
-          findout = false;
         }
       }
     }
     return findout;
   }
 }
-
 class myAI extends Player{
+  myAI instance;
   int[] priority = new int[2];//attack,move,
+  int[][] structures = new int[31][31];
   myAI(){
     setAIname("myAI");
     setImage(loadImage("myAI.png"));
+    for(int x = 0;x <= 30; x++){
+      for(int y = 0;y <= 30;y++){
+        structures[x][y] = checkingStructure(x,y);
+      }
+    }
   }
   public Player clone(){
-    Player ai;
+    myAI ai;
     ai = new myAI();
     ai.AIname = this.AIname;
     ai.img = this.img;
+    instance = ai;
     return ai;
   }
   public int ai(){
-
-    return PApplet.parseInt(random(12));
+    //\u30a8\u30ea\u30a2&\u4f53\u529b\u5224\u5b9a
+    moveController mc = new moveController(this);
+    if(this.getDroppedItem() != 0){
+      if(this.getItem() == 0 || this.getItem() == 9){
+        return 6;
+      }
+      if(this.getHp() < 100){
+        return 7;
+      }
+    }
+    if(this.getDroppedWeapon() != 0){
+      if(this.getWeapon() == 9){
+        return 5;
+      }
+      if(this.getDroppedWeapon() == 2){
+        return 5;
+      }
+    }
+    if(mc.hasTarget()){
+      return mc.moveToNearestStructure();
+    }
+    if(!mc.needMove()){
+      //\u6575\u3044\u305f\u3089\u6253\u3064
+      if(this.getHp() < 50){
+        return 7;
+      }
+      return mc.moveToNearestStructure();
+    }
+    return mc.moveToCenter();
   }
 }
 
 enum direction{
-  NORTH,NORTH_EAST,EAST,SOUTH_EAST,SOUTH,SOUTH_WEST,WEST,NORTH_WEST
+  NORTH,NORTH_EAST,EAST,SOUTH_EAST,SOUTH,SOUTH_WEST,WEST,NORTH_WEST;
+  public static direction split_1(direction dir){
+    switch (dir){
+      case NORTH_WEST : return direction.NORTH;
+      case NORTH_EAST : return direction.NORTH;
+      case SOUTH_EAST : return direction.SOUTH;
+      case SOUTH_WEST : return direction.SOUTH;
+      default: return dir;
+    }
+  }
+  public static direction split_2(direction dir){
+    switch (dir){
+      case NORTH_WEST : return direction.WEST;
+      case SOUTH_WEST : return direction.WEST;
+      case NORTH_EAST : return direction.EAST;
+      case SOUTH_EAST : return direction.EAST;
+      default: return dir;
+    }
+  }
+}
+class moveController{
+  myAI main;
+  int[] targetStructure;
+  moveController(myAI main){
+    this.main = main;
+  }
+  public boolean needMove()
+  {
+    for(int ox = -1;ox < 2;ox++){
+      for(int oy = -1;oy < 2;oy++){
+        if(checkingPoison(main.getX()+ox,main.getY()+oy) == 1){
+          return true;
+        }
+      }
+    }
+    return false;
+  }
+  public boolean hasTarget(){
+    if(targetStructure == null){
+      return false;
+    }
+    return true;
+  }
+  public int moveToCenter(){
+    if(main.getX() < 15){
+      if(main.getY() < 15){
+        return _movetocenter(direction.SOUTH_EAST);
+      }
+      return _movetocenter(direction.NORTH_EAST);
+    }
+    if(main.getX() > 15){
+      if(main.getY() < 15){
+        return _movetocenter(direction.SOUTH_WEST);
+      }
+      return _movetocenter(direction.NORTH_WEST);
+    }
+    if(main.getX() == 15){
+      if(main.getY() > 15){
+        return _movetocenter(direction.NORTH);
+      }
+      if(main.getY() < 15){
+        return _movetocenter(direction.SOUTH);
+      }
+      return 0;
+    }
+    if(main.getY() == 15){
+      if(main.getX() > 15){
+        return _movetocenter(direction.EAST);
+      }
+      if(main.getX() < 15){
+        return _movetocenter(direction.WEST);
+      }
+    }
+    return 0;
+  }
+  private int _movetocenter(direction dir){
+    int nowX = main.getX();
+    int nowY = main.getY();
+    direction dir1 = direction.split_1(dir);
+    direction dir2 = direction.split_2(dir);
+    if (distance(15,15,calX(nowX,dir1),calY(nowY,dir1)) > distance(15,15,calX(nowX,dir2),calY(nowY,dir2))){
+      return move(dir1);
+    }
+    return move(dir2);
+  }
+  private float distance(int x1,int y1,int x2,int y2)
+  {
+    return sqrt((x1-x2)^2+(y1-y2)^2);
+  }
+  private int calX(int x,direction dir){
+    if(dir == direction.EAST || dir == direction.NORTH_EAST || dir == direction.SOUTH_EAST){
+      return x + 1;
+    }else if(dir == direction.WEST || dir == direction.NORTH_WEST || dir == direction.SOUTH_WEST){
+      return x - 1;
+    }
+    return x;
+  }
+  private int calY(int y,direction dir){
+    if(dir == direction.NORTH || dir == direction.NORTH_EAST || dir == direction.NORTH_WEST){
+      return y - 1;
+    }else if(dir == direction.SOUTH || dir == direction.SOUTH_EAST || dir == direction.SOUTH_WEST){
+      return y + 1;
+    }
+    return y;
+  }
+  public int moveToNearestStructure(){
+    if(targetStructure == null || checkingStructure(main.getX(),main.getY()) != 0 || checkingPoison(targetStructure[0],targetStructure[1]) == 1){
+      float mindis = -1;
+      int sx = 0;
+      int sy = 0;
+      for(int i = 0;i <= 30;i++){
+        for(int j = 0;j <= 30;j++){
+          if(main.structures[i][j] != 0){
+            float d = distance(main.getX(),main.getY(),i,j);
+            if(mindis == -1){
+              mindis = d;
+              sx=i;
+              sy=j;
+              continue;
+            }
+            if(d <= mindis){
+              if(checkingPoison(i,j) == 0 || checkingCheckPoison(i,j) == 0 && d != 0){
+                mindis = d;
+                sx=i;
+                sy=j;
+                main.structures[i][j] = 0;
+              }
+            }
+          }
+        }
+      }
+      if(mindis == -1){
+        return 0;
+      }
+      targetStructure = new int[2];
+      targetStructure[0] = sx;targetStructure[1] = sy;
+    }
+    return moveTo(targetStructure[0],targetStructure[1]);
+  }
+  public int move(direction dir)
+  {
+    switch (dir){
+      case NORTH: return 1;
+      case SOUTH: return 2;
+      case WEST: return 3;
+      case EAST: return 4;
+      case NORTH_EAST:
+      case NORTH_WEST: return 1;
+      case SOUTH_EAST:
+      case SOUTH_WEST: return 2;
+      default: return 0;
+    }
+  }
+  public int moveTo(int x,int y){
+    direction dir1 = null;
+    direction dir2 = null;
+    if(main.getX() - x > 0){
+      dir1 = direction.EAST;
+    }else if(main.getX() - x < 0){
+      dir1 = direction.WEST;
+    }
+    if(main.getY() - y > 0){
+      dir2 = direction.NORTH;
+    }else if(main.getY() - y < 0){
+      dir2 = direction.SOUTH;
+    }
+    if(dir1 == null){
+      if(dir2 == null){
+        return 0;
+      }
+      return move(dir2);
+    }
+    if(dir2 == null){
+      return move(dir1);
+    }
+    int nowX = main.getX();int nowY = main.getY();
+    if (distance(nowX,nowY,calX(nowX,dir1),calY(nowY,dir1)) > distance(nowX,nowY,calX(nowX,dir2),calY(nowY,dir2))){
+      return move(dir1);
+    }
+    return move(dir2);
+  }
 }
 class randomAI extends Player {
   randomAI() {
@@ -992,7 +1212,7 @@ class randomAI extends Player {
 
   public Player clone() {
     Player ai;
-    ai = new myAI();
+    ai = new randomAI();
     ai.AIname = this.AIname;
     ai.img = this.img;
     return ai;

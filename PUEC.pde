@@ -45,6 +45,7 @@ void setup() {
   playerList[0] = new randomAI();
   playerList[1] = new randomAI();
   playerList[2] = new randomAI();
+  playerList[5] = new myAI();
   playerList[10] = new randomAI();
   //playerList[i] = new sampleAI();
 

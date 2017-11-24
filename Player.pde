@@ -269,7 +269,7 @@ public class Player {
       for (int i = 0; i<member; i++) {
         if (selectedPlayer[i].x == x && selectedPlayer[i].y == y) {
           findout = true;}
-        }
+        
       }
     }
     return findout;

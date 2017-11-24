@@ -64,8 +64,8 @@ void draw() {
     fill(#FFFF00);
     textAlign(CENTER, CENTER);
     imageMode(CENTER);
-    image(titleLogo, width/2, height/2);
-    text("PRESS ANY KEY", width/2, height*2/3);
+    image(titleLogo, width/2, height/3);
+    text("PRESS ANY KEY", width/2, height*5/8);
     textAlign(LEFT);
     textSize(16);
     text("version 1.2", 0, 16);

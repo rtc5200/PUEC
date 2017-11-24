@@ -17,11 +17,10 @@ static int[] itemStatus  ={0, 10, 25, 15, 0, 0, 0, 0, 0, 5};
 
 void setup() {
   size(800, 800);
-  background(255);
+  background(128);
   frameRate(60);
   font = loadFont("IPAPGothic-32.vlw");
   titleLogo = loadImage("PUEC_Logo.png");
-  backGround = loadImage("4784.jpg");
   textFont(font, 32);
   battleTime = 0;
   turn = 0;
@@ -61,7 +60,7 @@ void setup() {
 
 void draw() {
   if (scene == 0 ) {
-    background(255);
+    background(128);
     image(backGround,0,0);
     textSize(50);
     fill(#00FFFF);

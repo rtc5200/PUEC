@@ -38,15 +38,15 @@ class myAI extends Player{
         return 5;
       }
     }
-    if(mc.hasTarget()){
-      return mc.moveToNearestStructure();
-    }
     if(!mc.needMove()){
       //敵いたら打つ
       if(this.getHp() < 50){
         return 7;
       }
       if(shoot() != 0){shoot();}
+      return mc.moveToNearestStructure();
+    }
+    if(mc.hasTarget()){
       return mc.moveToNearestStructure();
     }
     return mc.moveToCenter();

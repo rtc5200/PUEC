@@ -1007,15 +1007,15 @@ class myAI extends Player{
         return 5;
       }
     }
-    if(mc.hasTarget()){
-      return mc.moveToNearestStructure();
-    }
     if(!mc.needMove()){
       //\u6575\u3044\u305f\u3089\u6253\u3064
       if(this.getHp() < 50){
         return 7;
       }
       if(shoot() != 0){shoot();}
+      return mc.moveToNearestStructure();
+    }
+    if(mc.hasTarget()){
       return mc.moveToNearestStructure();
     }
     return mc.moveToCenter();

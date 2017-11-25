@@ -98,16 +98,16 @@ void spownningItem(BattleGround[][] battleGround) {
         break;
       case 2:
         if (x > 70) {
-          battleGround[i][j].item = int(random(4))+1;
+          battleGround[i][j].item = int(random(3))+1;
         } else {
-          battleGround[i][j].weapon = int(random(4))+1;
+          battleGround[i][j].weapon = int(random(3))+1;
         }
         break;
       case 1:
         if (x > 70) {
-          battleGround[i][j].weapon = int(random(4))+1;
+          battleGround[i][j].weapon = int(random(3))+1;
         } else {
-          battleGround[i][j].item = int(random(4))+1;
+          battleGround[i][j].item = int(random(3))+1;
         }
         break;
       }

@@ -165,12 +165,16 @@ public class Player {
   }
   public void shootWeaponN(int playerNumber) {
     battleGround[this.x][this.y].battleSound = 1;
-    if(this.reloadTime <= 0 &&battleGround[this.x][this.y].structure != 2){
+    if(this.reloadTime <= 0 ){
     for (int i = 0; i<weaponStatus[this.weapon][1]+1&& this.y -i > -1; i++) {
       if (battleGround[this.x][this.y -i].structure == 0) {
         battleGround[this.x][this.y -i].bullet[0] = this.weapon;
         battleGround[this.x][this.y -i].bullet[1] = playerNumber+1;
         if(battleGround[this.x][this.y].structure == 2){
+          if(this.weapon == 9){
+            battleGround[this.x][this.y].bullet[0] = this.weapon;
+            battleGround[this.x][this.y].bullet[1] = playerNumber +1;
+          }
           return ;
         }
       } else if (battleGround[this.x ][this.y -i].structure == 1) {
@@ -188,6 +192,10 @@ public class Player {
           battleGround[this.x][this.y +i].bullet[0] = this.weapon;
           battleGround[this.x][this.y +i].bullet[1] = playerNumber +1;
           if(battleGround[this.x][this.y].structure == 2){
+            if(this.weapon == 9){
+              battleGround[this.x][this.y].bullet[0] = this.weapon;
+              battleGround[this.x][this.y].bullet[1] = playerNumber +1;
+            }
             return ;
           }
           } else if (battleGround[this.x ][this.y +i].structure == 1) {
@@ -204,7 +212,11 @@ public class Player {
         if (battleGround[this.x -i][this.y ].structure == 0) {
           battleGround[this.x-i][this.y ].bullet[0] = this.weapon;
           battleGround[this.x-i][this.y ].bullet[1] = playerNumber+1;
-          if(battleGround[this.x][this.y].structure == 2){
+          if(battleGround[this.x][this.y].structure == 2 ){
+            if(this.weapon == 9){
+              battleGround[this.x][this.y].bullet[0] = this.weapon;
+              battleGround[this.x][this.y].bullet[1] = playerNumber +1;
+            }
             return ;
           }
 
@@ -223,6 +235,10 @@ public class Player {
             battleGround[this.x + i][this.y ].bullet[0] = this.weapon;
             battleGround[this.x +i][this.y ].bullet[1] = playerNumber+1;
             if(battleGround[this.x][this.y].structure == 2){
+              if(this.weapon == 9){
+                battleGround[this.x][this.y].bullet[0] = this.weapon;
+                battleGround[this.x][this.y].bullet[1] = playerNumber +1;
+              }
               return ;
             }
           } else if (battleGround[this.x +i][this.y ].structure == 1) {
@@ -263,12 +279,11 @@ public class Player {
   }
   boolean searchingOtherPlayer(int x, int y) {
     boolean findout = false;
-    if ( abs(this.x-x) >3 || abs(this.y -y) > 3|| battleGround[x][y].structure == 2) {
+    if ( abs(this.x-x) >3 && abs(this.y -y) > 3 && battleGround[x][y].structure == 2) {
       findout = false;
     } else {
       for (int i = 0; i<member; i++) {
         if (selectedPlayer[i].x == x && selectedPlayer[i].y == y) {
-
           findout = true;
         }
       }

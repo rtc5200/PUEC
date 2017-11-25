@@ -406,8 +406,8 @@ void startingTurn() {
       if (turn >= 15 && turn%10 >= 5) {
         spreadingPoison(battleGround, i, j);
       }
-      //battleGround[i][j].bullet[0] = 0;
-      //battleGround[i][j].bullet[1] = 0;
+      battleGround[i][j].bullet[0] = 0;
+      battleGround[i][j].bullet[1] = 0;
       bullet[i][j] = 0;
       battleGround[i][j].battleSound = 0;
     }

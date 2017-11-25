@@ -1013,7 +1013,9 @@ class myAI extends Player{
     turn++;
     //\u30a8\u30ea\u30a2&\u4f53\u529b\u5224\u5b9a
     if(this.getHp() < 75){
-      return 7;
+      if(getItem() != 0){
+        return 7;
+      }
     }
     if(this.getDroppedItem() != 0){
       if(this.getItem() == 0 || this.getItem() == 9){
@@ -1047,14 +1049,16 @@ class myAI extends Player{
           if(oy == 0){
             if(ox < 0){
               return 10;
+            }else if(ox > 0){
+              return 11;
             }
-            return 11;
           }
           if(ox == 0){
             if(oy < 0){
               return 8;
+            }else if(oy > 0){
+              return 9;
             }
-            return 9;
           }
         }
       }
@@ -1095,14 +1099,31 @@ class moveController{
     for(int ox = -1;ox < 2;ox++){
       for(int oy = -1;oy < 2;oy++){
         if(checkingPoison(main.getX()+ox,main.getY()+oy) == 1){
+          if(AllcoveredWithPoison()){
+            return false;
+          }
           return true;
         }
       }
     }
     return false;
   }
+  public boolean AllcoveredWithPoison(){
+    for(int i = 0;i < 30;i++){
+      for(int j = 0;j < 30;j++){
+        if(checkingPoison(i,j) == 0){
+          return false;
+        }
+      }
+    }
+    return true;
+  }
   public boolean hasTarget(){
     if(targetStructure == null){
+      return false;
+    }
+    if(main.getX() == targetStructure[0] && main.getY() == targetStructure[1]){
+      main.structures[main.getX()][main.getY()] = 0;
       return false;
     }
     return true;
@@ -1127,7 +1148,6 @@ class moveController{
       if(main.getY() < 15){
         return _movetocenter(direction.SOUTH);
       }
-      return moveToNearestStructure();
     }
     if(main.getY() == 15){
       if(main.getX() > 15){
@@ -1137,7 +1157,7 @@ class moveController{
         return _movetocenter(direction.WEST);
       }
     }
-    return moveToNearestStructure();
+    return (int)random(1,5);
   }
   private int _movetocenter(direction dir){
     int nowX = main.getX();
@@ -1183,7 +1203,6 @@ class moveController{
                 mindis = d;
                 sx=i;
                 sy=j;
-                main.structures[i][j] = 0;
               }
             }
           }

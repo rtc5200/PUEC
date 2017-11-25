@@ -1,7 +1,8 @@
 class myAI extends Player{
   myAI instance;
-  int[] priority = new int[2];//attack,move,
   int[][] structures = new int[31][31];
+  int turn;
+  moveController mc;
   myAI(){
     setAIname("myAI");
     setImage(loadImage("myAI.png"));
@@ -10,6 +11,8 @@ class myAI extends Player{
         structures[x][y] = checkingStructure(x,y);
       }
     }
+    turn = 0;
+    mc = new moveController(this);
   }
   Player clone(){
     myAI ai;
@@ -20,8 +23,11 @@ class myAI extends Player{
     return ai;
   }
   int ai(){
+    turn++;
     //エリア&体力判定
-    moveController mc = new moveController(this);
+    if(this.getHp() < 75){
+      return 7;
+    }
     if(this.getDroppedItem() != 0){
       if(this.getItem() == 0 || this.getItem() == 9){
         return 6;
@@ -40,20 +46,13 @@ class myAI extends Player{
     }
     if(!mc.needMove()){
       //敵いたら打つ
-      if(this.getHp() < 50){
-        return 7;
-      }
-      if(shoot() != 0){shoot();}
-      return mc.moveToNearestStructure();
-    }
-    if(mc.hasTarget()){
-      return mc.moveToNearestStructure();
+      return shoot() != 0 ? shoot() : mc.moveToNearestStructure();
     }
     return mc.moveToCenter();
   }
   int shoot(){
-    if(this.searchingOtherPlayer(getX(),getY()) && getWeapon() == 9){
-      return (int)random(1,4);
+    if(this.searchingOtherPlayer(getX(),getY()) && getWeapon() == 9 || this.getReloadTime() != 0){
+      return 0;
     }
     for(int ox = -2;ox < 3;ox++){
       for(int oy = -2;oy < 3;oy++){
@@ -141,7 +140,7 @@ class moveController{
       if(main.getY() < 15){
         return _movetocenter(direction.SOUTH);
       }
-      return 0;
+      return moveToNearestStructure();
     }
     if(main.getY() == 15){
       if(main.getX() > 15){
@@ -151,7 +150,7 @@ class moveController{
         return _movetocenter(direction.WEST);
       }
     }
-    return 0;
+    return moveToNearestStructure();
   }
   private int _movetocenter(direction dir){
     int nowX = main.getX();
@@ -185,19 +184,13 @@ class moveController{
   }
   int moveToNearestStructure(){
     if(!hasTarget() || checkingStructure(main.getX(),main.getY()) != 0 || checkingPoison(targetStructure[0],targetStructure[1]) == 1){
-      float mindis = -1;
+      float mindis = 32;
       int sx = 0;
       int sy = 0;
       for(int i = 0;i <= 30;i++){
         for(int j = 0;j <= 30;j++){
           if(main.structures[i][j] != 0){
             float d = distance(main.getX(),main.getY(),i,j);
-            if(mindis == -1){
-              mindis = d;
-              sx=i;
-              sy=j;
-              continue;
-            }
             if(d <= mindis){
               if(checkingPoison(i,j) == 0 || checkingCheckPoison(i,j) == 0 && d != 0){
                 mindis = d;
@@ -209,8 +202,8 @@ class moveController{
           }
         }
       }
-      if(mindis == -1){
-        return 0;
+      if(mindis == 32){
+        return moveToCenter();
       }
       targetStructure = new int[2];
       targetStructure[0] = sx;targetStructure[1] = sy;
@@ -224,45 +217,24 @@ class moveController{
       case SOUTH: return 2;
       case WEST: return 3;
       case EAST: return 4;
-      case NORTH_EAST:
+      case NORTH_EAST: return 1;
       case NORTH_WEST: return 1;
-      case SOUTH_EAST:
+      case SOUTH_EAST: return 2;
       case SOUTH_WEST: return 2;
-      default: return 0;
+      default: return (int)random(1,5);
     }
   }
   int moveTo(int x,int y){
-    direction dir1 = null;
-    direction dir2 = null;
-    if(main.getX() - x > 0){
-      dir1 = direction.EAST;
-    }else if(main.getX() - x < 0){
-      dir1 = direction.WEST;
-    }
-    if(main.getY() - y > 0){
-      dir2 = direction.NORTH;
-    }else if(main.getY() - y < 0){
-      dir2 = direction.SOUTH;
-    }
-    if(dir1 == null){
-      if(dir2 == null){
-        return 0;
-      }
-      return move(dir2);
-    }
-    if(dir2 == null){
-      return move(dir1);
-    }
     int nowX = main.getX();int nowY = main.getY();
-    if (abs(distance(nowX,nowY,calX(nowX,dir1),calY(nowY,dir1)) - distance(nowX,nowY,calX(nowX,dir2),calY(nowY,dir2))) > 1){
-      if(distance(nowX,nowY,calX(nowX,dir1),calY(nowY,dir1)) > distance(nowX,nowY,calX(nowX,dir2),calY(nowY,dir2))){
-        return move(dir2);
+    if(x != nowX){
+      if(nowX > x){
+        return move(direction.WEST);
       }
-      return move(dir1);
+      return move(direction.EAST);
     }
-    if(random(2) == 1){
-      return move(dir1);
+    if(nowY > y){
+      return move(direction.NORTH);
     }
-    return move(dir2);
+    return move(direction.SOUTH);
   }
 }

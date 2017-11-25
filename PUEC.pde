@@ -5,6 +5,7 @@ int rank = 0;
 int scene;
 int pointor;
 int howManySelectedPlayer;
+int[][][] bullet;
 static int member = 8;
 Player[] playerList;
 Player[] selectedPlayer;
@@ -29,7 +30,7 @@ void setup() {
   for (int i = 0; i < battleGround.length; i++) {
     for (int j = 0; j < battleGround.length; j++) {
       battleGround[i][j] = new BattleGround();
-    }
+      }
   }
   initializingBattleGround(battleGround);
   spownningItem(battleGround);
@@ -42,10 +43,17 @@ void setup() {
     playerIcon[i] = null;
   }
   /*write here */
-  playerList[0] = new randomAI();
-  playerList[1] = new randomAI();
-  playerList[2] = new randomAI();
-  playerList[10] = new randomAI();
+  playerList[0] = new Youta();
+  playerList[1] = new Apple();
+  playerList[2] = new kennkino();
+  playerList[3] = new Banana();
+  playerList[4] = new myAI();
+  playerList[5] = new B6();
+  playerList[6] = new MaidGre();
+  playerList[7] = new mtsueAI();
+  playerList[8] = new amuzaAI();
+  playerList[19] = new randomAI();
+  //playerList[5] = new Youta();
   //playerList[i] = new sampleAI();
 
   /*write here*/
@@ -214,7 +222,7 @@ void draw() {
       }
       //マップ上のメンバーの位置の描写
       if (turn > 0) {
-        if(scene != 0){
+        if (scene != 0) {
           image(playerIcon[i], selectedPlayer[i].x*width/40, selectedPlayer[i].y*height/40);
         }
       }
@@ -231,9 +239,11 @@ void draw() {
           selectedPlayer[i].weapon = 9;
           selectedPlayer[i].item = 9;
           selectedPlayer[i].rank = 0;
+          selectedPlayer[i].iD = i;
         } else {
           // turn > 0 以降のプレイヤーの行動
           if (selectedPlayer[i].live) {
+                          println("player"+i);
             switch(selectedPlayer[i].ai()) {
             case 1:
               selectedPlayer[i].moveN();
@@ -390,13 +400,15 @@ void draw() {
 }
 
 void startingTurn() {
+  println("startingturn");
   for (int i = 0; i < battleGround.length; i++) {
     for (int j = 0; j < battleGround.length; j++) {
       if (turn >= 15 && turn%10 >= 5) {
         spreadingPoison(battleGround, i, j);
       }
-      battleGround[i][j].bullet[0] = 0;
-      battleGround[i][j].bullet[1] = 0;
+      //battleGround[i][j].bullet[0] = 0;
+      //battleGround[i][j].bullet[1] = 0;
+      bullet[i][j] = 0;
       battleGround[i][j].battleSound = 0;
     }
   }
@@ -415,6 +427,7 @@ void startingTurn() {
 
 
 void endingTurn() {
+  println("endingturn");
   for (int i = 0; i < battleGround.length; i++) {
     for (int j = 0; j < battleGround.length; j++) {
       if (turn >= 14 && turn%10 >=4) {

@@ -1,6 +1,6 @@
 public  class BattleGround {
   private int item = 0, weapon = 0, structure, poison, poisonCheck,battleSound;
-  private int[] bullet = new int[2];
+  private int[] bullet = new int[member];
   BattleGround() {
   }
 
@@ -23,8 +23,9 @@ void initializingBattleGround(BattleGround[][] battleGround) {
   for (int i = 0; i<battleGround.length; i++) {
     for (int j =0; j<battleGround.length; j++) {
       battleGround[i][j].structure = 0;
-      battleGround[i][j].bullet[0] = 0;
-      battleGround[i][j].bullet[1] = 0;
+      for(int k = 0; k<member;k++){
+        battleGround[i][j].bullet[k] = 0;
+      }
       battleGround[i][j].item = 0;
       battleGround[i][j].weapon = 0;
       battleGround[i][j].poison = 0;

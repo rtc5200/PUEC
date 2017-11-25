@@ -46,7 +46,7 @@ void setup() {
   playerList[19] = new randomAI();
   //playerList[5] = new Youta();
   //playerList[i] = new sampleAI();
-
+  playerList[8] = new myAI();
   /*write here*/
 
   for (int i = 0; i < 20; i++) {

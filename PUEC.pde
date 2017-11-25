@@ -43,15 +43,6 @@ void setup() {
     playerIcon[i] = null;
   }
   /*write here */
-  playerList[0] = new Youta();
-  playerList[1] = new Apple();
-  playerList[2] = new kennkino();
-  playerList[3] = new Banana();
-  playerList[4] = new myAI();
-  playerList[5] = new B6();
-  playerList[6] = new MaidGre();
-  playerList[7] = new mtsueAI();
-  playerList[8] = new amuzaAI();
   playerList[19] = new randomAI();
   //playerList[5] = new Youta();
   //playerList[i] = new sampleAI();

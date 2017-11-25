@@ -30,7 +30,7 @@ void setup() {
   for (int i = 0; i < battleGround.length; i++) {
     for (int j = 0; j < battleGround.length; j++) {
       battleGround[i][j] = new BattleGround();
-      }
+    }
   }
   initializingBattleGround(battleGround);
   spownningItem(battleGround);
@@ -134,9 +134,11 @@ void draw() {
           break;
         }
         rect(i*width/40, j*height/40, width/40, height/40);
-        if (battleGround[i][j].bullet[0] != 0) {
-          fill(#FF0000);
-          ellipse(i*width/40+width/80, j*height/40+height/80, width/80, height/80);
+        for (int k = 0; k<howManySelectedPlayer; k++) {
+          if (battleGround[i][j].bullet[k] != 0) {
+            fill(#FF0000);
+            ellipse(i*width/40+width/80, j*height/40+height/80, width/80, height/80);
+          }
         }
         // 毒の描写
         if (battleGround[i][j].poison == 1) {
@@ -234,7 +236,7 @@ void draw() {
         } else {
           // turn > 0 以降のプレイヤーの行動
           if (selectedPlayer[i].live) {
-                          println("player"+i);
+            println("player"+i);
             switch(selectedPlayer[i].ai()) {
             case 1:
               selectedPlayer[i].moveN();
@@ -258,16 +260,16 @@ void draw() {
               selectedPlayer[i].useItem();
               break;
             case 8:
-              selectedPlayer[i].shootWeaponN(i);
+              selectedPlayer[i].shootWeaponN();
               break;
             case 9:
-              selectedPlayer[i].shootWeaponS(i);
+              selectedPlayer[i].shootWeaponS();
               break;
             case 10:
-              selectedPlayer[i].shootWeaponW(i);
+              selectedPlayer[i].shootWeaponW();
               break;
             case 11:
-              selectedPlayer[i].shootWeaponE(i);
+              selectedPlayer[i].shootWeaponE();
               break;
             default:
             }
@@ -397,9 +399,9 @@ void startingTurn() {
       if (turn >= 15 && turn%10 >= 5) {
         spreadingPoison(battleGround, i, j);
       }
-      battleGround[i][j].bullet[0] = 0;
-      battleGround[i][j].bullet[1] = 0;
-      bullet[i][j] = 0;
+      for (int k = 0; k < howManySelectedPlayer; k++) {
+        battleGround[i][j].bullet[k]=0;
+      }
       battleGround[i][j].battleSound = 0;
     }
   }
@@ -430,13 +432,19 @@ void endingTurn() {
     if (battleGround[selectedPlayer[i].getX()][selectedPlayer[i].getY()].poison == 1 && selectedPlayer[i].live) {
       selectedPlayer[i].decreasingHp(10);
     }
-    if (battleGround[selectedPlayer[i].getX()][selectedPlayer[i].getY()].bullet[1] != int(i)+1 && selectedPlayer[i].live) {
-      selectedPlayer[i].decreasingHp(weaponStatus[battleGround[selectedPlayer[i].getX()][selectedPlayer[i].getY()].bullet[0]][0]);
+    for (int j = 0; j < howManySelectedPlayer; j++) {
+      int damage = weaponStatus[selectedPlayer[j].getWeapon()][0];
+      if (battleGround[selectedPlayer[i].getX()][selectedPlayer[i].getY()].bullet[j] == 1 && selectedPlayer[i].live && i != j) {
+        selectedPlayer[i].decreasingHp(damage);
+      }
     }
     if (selectedPlayer[i].hp <= 0 && selectedPlayer[i].live) {
       selectedPlayer[i].setLive(false);
       selectedPlayer[i].rank = howManySelectedPlayer - rank;
       rank++;
+    }
+    if (rank == howManySelectedPlayer - 1) {
+      scene = 3;
     }
     if (selectedPlayer[i].reloadTime > 0) {
       selectedPlayer[i].reloadTime--;

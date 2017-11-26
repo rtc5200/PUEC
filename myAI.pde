@@ -30,7 +30,7 @@ class myAI extends Player{
         return 7;
       }
     }
-    if(this.getDroppedItem() != 0){
+    if(this.getDroppedItem() != 0 && this.getDroppedItem() != 9){
       if(this.getItem() == 0 || this.getItem() == 9){
         return 6;
       }
@@ -42,9 +42,12 @@ class myAI extends Player{
       if(this.getWeapon() == 9){
         return 5;
       }
-      if(this.getDroppedWeapon() == 2){
+      if(this.getDroppedWeapon() == 2 && this.getWeapon() != 2){
         return 5;
       }
+    }
+    if(turn < 15){
+      mc.moveToNearestStructure();
     }
     if(!mc.needMove()){
       //敵いたら打つ
@@ -53,7 +56,13 @@ class myAI extends Player{
     return mc.moveToCenter();
   }
   int shoot(){
-    if(this.searchingOtherPlayer(getX(),getY()) && getWeapon() == 9 || this.getReloadTime() != 0){
+    if(this.searchingOtherPlayer(getX(),getY()) && getWeapon() == 9){
+      return 0;
+    }
+    if(mc.AllcoveredWithPoison() && this.getReloadTime() != 0){
+      return (int)random(1,5);
+    }
+    if(this.getReloadTime() != 0){
       return 0;
     }
     for(int ox = -2;ox < 3;ox++){
@@ -177,6 +186,12 @@ class moveController{
     int nowY = main.getY();
     direction dir1 = direction.split_1(dir);
     direction dir2 = direction.split_2(dir);
+    if(checkingPoison(calX(calX(nowX,dir1),dir1),nowY) == 1){
+      return move(dir2);
+    }
+    if(checkingPoison(calX(calX(nowX,dir2),dir2),nowY) == 1){
+      return move(dir1);
+    }
     if (distance(15,15,calX(nowX,dir1),calY(nowY,dir1)) > distance(15,15,calX(nowX,dir2),calY(nowY,dir2))){
       return move(dir1);
     }
@@ -203,7 +218,7 @@ class moveController{
     return y;
   }
   int moveToNearestStructure(){
-    if(!hasTarget() || checkingStructure(main.getX(),main.getY()) != 0 || checkingPoison(targetStructure[0],targetStructure[1]) == 1){
+    if(!hasTarget() || checkingPoison(targetStructure[0],targetStructure[1]) == 1){
       float mindis = 32;
       int sx = 0;
       int sy = 0;

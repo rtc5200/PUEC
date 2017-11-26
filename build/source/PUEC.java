@@ -46,7 +46,7 @@ public void setup() {
   for (int i = 0; i < battleGround.length; i++) {
     for (int j = 0; j < battleGround.length; j++) {
       battleGround[i][j] = new BattleGround();
-      }
+    }
   }
   initializingBattleGround(battleGround);
   spownningItem(battleGround);
@@ -150,9 +150,11 @@ public void draw() {
           break;
         }
         rect(i*width/40, j*height/40, width/40, height/40);
-        if (battleGround[i][j].bullet[0] != 0) {
-          fill(0xffFF0000);
-          ellipse(i*width/40+width/80, j*height/40+height/80, width/80, height/80);
+        for (int k = 0; k<howManySelectedPlayer; k++) {
+          if (battleGround[i][j].bullet[k] != 0) {
+            fill(0xffFF0000);
+            ellipse(i*width/40+width/80, j*height/40+height/80, width/80, height/80);
+          }
         }
         // \u6bd2\u306e\u63cf\u5199
         if (battleGround[i][j].poison == 1) {
@@ -250,7 +252,7 @@ public void draw() {
         } else {
           // turn > 0 \u4ee5\u964d\u306e\u30d7\u30ec\u30a4\u30e4\u30fc\u306e\u884c\u52d5
           if (selectedPlayer[i].live) {
-                          println("player"+i);
+            println("player"+i);
             switch(selectedPlayer[i].ai()) {
             case 1:
               selectedPlayer[i].moveN();
@@ -274,16 +276,16 @@ public void draw() {
               selectedPlayer[i].useItem();
               break;
             case 8:
-              selectedPlayer[i].shootWeaponN(i);
+              selectedPlayer[i].shootWeaponN();
               break;
             case 9:
-              selectedPlayer[i].shootWeaponS(i);
+              selectedPlayer[i].shootWeaponS();
               break;
             case 10:
-              selectedPlayer[i].shootWeaponW(i);
+              selectedPlayer[i].shootWeaponW();
               break;
             case 11:
-              selectedPlayer[i].shootWeaponE(i);
+              selectedPlayer[i].shootWeaponE();
               break;
             default:
             }
@@ -413,9 +415,9 @@ public void startingTurn() {
       if (turn >= 15 && turn%10 >= 5) {
         spreadingPoison(battleGround, i, j);
       }
-      battleGround[i][j].bullet[0] = 0;
-      battleGround[i][j].bullet[1] = 0;
-      bullet[i][j] = 0;
+      for (int k = 0; k < howManySelectedPlayer; k++) {
+        battleGround[i][j].bullet[k]=0;
+      }
       battleGround[i][j].battleSound = 0;
     }
   }
@@ -446,13 +448,19 @@ public void endingTurn() {
     if (battleGround[selectedPlayer[i].getX()][selectedPlayer[i].getY()].poison == 1 && selectedPlayer[i].live) {
       selectedPlayer[i].decreasingHp(10);
     }
-    if (battleGround[selectedPlayer[i].getX()][selectedPlayer[i].getY()].bullet[1] != PApplet.parseInt(i)+1 && selectedPlayer[i].live) {
-      selectedPlayer[i].decreasingHp(weaponStatus[battleGround[selectedPlayer[i].getX()][selectedPlayer[i].getY()].bullet[0]][0]);
+    for (int j = 0; j < howManySelectedPlayer; j++) {
+      int damage = weaponStatus[selectedPlayer[j].getWeapon()][0];
+      if (battleGround[selectedPlayer[i].getX()][selectedPlayer[i].getY()].bullet[j] == 1 && selectedPlayer[i].live && i != j) {
+        selectedPlayer[i].decreasingHp(damage);
+      }
     }
     if (selectedPlayer[i].hp <= 0 && selectedPlayer[i].live) {
       selectedPlayer[i].setLive(false);
       selectedPlayer[i].rank = howManySelectedPlayer - rank;
       rank++;
+    }
+    if (rank == howManySelectedPlayer - 1) {
+      scene = 3;
     }
     if (selectedPlayer[i].reloadTime > 0) {
       selectedPlayer[i].reloadTime--;
@@ -522,7 +530,7 @@ public void keyPressed() {
 }
 public  class BattleGround {
   private int item = 0, weapon = 0, structure, poison, poisonCheck,battleSound;
-  private int[] bullet = new int[2];
+  private int[] bullet = new int[member];
   BattleGround() {
   }
 
@@ -545,8 +553,9 @@ public void initializingBattleGround(BattleGround[][] battleGround) {
   for (int i = 0; i<battleGround.length; i++) {
     for (int j =0; j<battleGround.length; j++) {
       battleGround[i][j].structure = 0;
-      battleGround[i][j].bullet[0] = 0;
-      battleGround[i][j].bullet[1] = 0;
+      for(int k = 0; k<member;k++){
+        battleGround[i][j].bullet[k] = 0;
+      }
       battleGround[i][j].item = 0;
       battleGround[i][j].weapon = 0;
       battleGround[i][j].poison = 0;
@@ -862,16 +871,14 @@ public class Player {
   public void decreasingHp(int x) {
     this.hp -= x;
   }
-  public void shootWeaponN(int playerNumber) {
+  public void shootWeaponN() {
     battleGround[this.x][this.y].battleSound = 1;
     if (this.reloadTime <= 0 ) {
       for (int i = 0; i<weaponStatus[this.weapon][1]+1&& this.y -i > -1; i++) {
         if (battleGround[this.x][this.y -i].structure == 0) {
-          battleGround[this.x][this.y -i].bullet[0] = this.weapon;
-          battleGround[this.x][this.y -i].bullet[1] = playerNumber+1;
+          battleGround[this.x][this.y -i].bullet[this.iD] = 1;
           if (battleGround[this.x][this.y].structure == 2) {
-            battleGround[this.x][this.y].bullet[0] = this.weapon;
-            battleGround[this.x][this.y].bullet[1] = playerNumber +1;
+            battleGround[this.x][this.y].bullet[this.iD] = 1;
           }
         } else if (battleGround[this.x ][this.y -i].structure == 1) {
           }
@@ -879,16 +886,14 @@ public class Player {
       this.reloadTime = weaponStatus[this.weapon][2];
     }
   }
-  public void shootWeaponS(int playerNumber) {
+  public void shootWeaponS() {
     battleGround[this.x][this.y].battleSound = 1;
     if (this.reloadTime <= 0 && battleGround[this.x][this.y].structure != 2) {
       for (int i = 0; i<weaponStatus[this.weapon][1]+1 && this.y+i < battleGround.length && y-i > -1; i++) {
         if (battleGround[this.x][this.y +i].structure == 0) {
-          battleGround[this.x][this.y +i].bullet[0] = this.weapon;
-          battleGround[this.x][this.y +i].bullet[1] = playerNumber +1;
+          battleGround[this.x][this.y +i].bullet[this.iD] = 1;
           if (battleGround[this.x][this.y].structure == 2) {
-            battleGround[this.x][this.y].bullet[0] = this.weapon;
-            battleGround[this.x][this.y].bullet[1] = playerNumber +1;
+            battleGround[this.x][this.y].bullet[this.iD] = 1;
           }
         } else if (battleGround[this.x ][this.y +i].structure == 1) {
         }
@@ -896,34 +901,29 @@ public class Player {
       this.reloadTime = weaponStatus[this.weapon][2];
     }
   }
-  public void shootWeaponW(int playerNumber) {
+  public void shootWeaponW() {
     battleGround[this.x][this.y].battleSound = 1;
     if (this.reloadTime <= 0 ) {
       for (int i = 0; i<weaponStatus[this.weapon][1]+1 && this.x -i > -1; i++) {
         if (battleGround[this.x -i][this.y ].structure == 0) {
-          battleGround[this.x-i][this.y ].bullet[0] = this.weapon;
-          battleGround[this.x-i][this.y ].bullet[1] = playerNumber+1;
+          battleGround[this.x-i][this.y ].bullet[this.iD] = 1;
           if (battleGround[this.x][this.y].structure == 2 ) {
-            battleGround[this.x][this.y].bullet[0] = this.weapon;
-            battleGround[this.x][this.y].bullet[1] = playerNumber +1;
+            battleGround[this.x][this.y].bullet[this.iD] = 1;
           }
         } else if (battleGround[this.x -i][this.y ].structure == 1) {
-          return ;
         }
       }
       this.reloadTime = weaponStatus[this.weapon][2];
     }
   }
-  public void shootWeaponE(int playerNumber) {
+  public void shootWeaponE() {
     battleGround[this.x][this.y].battleSound = 1;
     if (this.reloadTime <= 0 && battleGround[this.x][this.y].structure != 2) {
       for (int i = 0; i<weaponStatus[this.weapon][1]+1 && this.x +i < battleGround.length; i++) {
         if (battleGround[this.x +i][this.y ].structure == 0) {
-          battleGround[this.x + i][this.y ].bullet[0] = this.weapon;
-          battleGround[this.x +i][this.y ].bullet[1] = playerNumber+1;
+          battleGround[this.x +i][this.y ].bullet[this.iD] = 1;
           if (battleGround[this.x][this.y].structure == 2) {
-            battleGround[this.x][this.y].bullet[0] = this.weapon;
-            battleGround[this.x][this.y].bullet[1] = playerNumber +1;
+            battleGround[this.x][this.y].bullet[this.iD] = 1;
           }
         } else if (battleGround[this.x +i][this.y ].structure == 1) {
         }
@@ -1006,7 +1006,7 @@ class myAI extends Player{
         return 7;
       }
     }
-    if(this.getDroppedItem() != 0){
+    if(this.getDroppedItem() != 0 && this.getDroppedItem() != 9){
       if(this.getItem() == 0 || this.getItem() == 9){
         return 6;
       }
@@ -1018,9 +1018,12 @@ class myAI extends Player{
       if(this.getWeapon() == 9){
         return 5;
       }
-      if(this.getDroppedWeapon() == 2){
+      if(this.getDroppedWeapon() == 2 && this.getWeapon() != 2){
         return 5;
       }
+    }
+    if(turn < 15){
+      mc.moveToNearestStructure();
     }
     if(!mc.needMove()){
       //\u6575\u3044\u305f\u3089\u6253\u3064
@@ -1029,7 +1032,13 @@ class myAI extends Player{
     return mc.moveToCenter();
   }
   public int shoot(){
-    if(this.searchingOtherPlayer(getX(),getY()) && getWeapon() == 9 || this.getReloadTime() != 0){
+    if(this.searchingOtherPlayer(getX(),getY()) && getWeapon() == 9){
+      return 0;
+    }
+    if(mc.AllcoveredWithPoison() && this.getReloadTime() != 0){
+      return (int)random(1,5);
+    }
+    if(this.getReloadTime() != 0){
       return 0;
     }
     for(int ox = -2;ox < 3;ox++){
@@ -1153,6 +1162,12 @@ class moveController{
     int nowY = main.getY();
     direction dir1 = direction.split_1(dir);
     direction dir2 = direction.split_2(dir);
+    if(checkingPoison(calX(calX(nowX,dir1),dir1),nowY) == 1){
+      return move(dir2);
+    }
+    if(checkingPoison(calX(calX(nowX,dir2),dir2),nowY) == 1){
+      return move(dir1);
+    }
     if (distance(15,15,calX(nowX,dir1),calY(nowY,dir1)) > distance(15,15,calX(nowX,dir2),calY(nowY,dir2))){
       return move(dir1);
     }
@@ -1179,7 +1194,7 @@ class moveController{
     return y;
   }
   public int moveToNearestStructure(){
-    if(!hasTarget() || checkingStructure(main.getX(),main.getY()) != 0 || checkingPoison(targetStructure[0],targetStructure[1]) == 1){
+    if(!hasTarget() || checkingPoison(targetStructure[0],targetStructure[1]) == 1){
       float mindis = 32;
       int sx = 0;
       int sy = 0;

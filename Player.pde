@@ -175,7 +175,7 @@ public class Player {
             battleGround[this.x][this.y].bullet[this.iD] = 1;
           }
         } else if (battleGround[this.x ][this.y -i].structure == 1) {
-          }
+        }
       }
       this.reloadTime = weaponStatus[this.weapon][2];
     }
@@ -254,13 +254,15 @@ public class Player {
     }
     return sound;
   }
-  boolean searchingOtherPlayer(int x,int y){
+  boolean searchingOtherPlayer(int x, int y) {
     boolean findOut = false;
-    if(x > -1 && y > -1 && x < battleGround.length && y < battleGround.length){
-      if(abs(this.getX()-x) < 4 && abs(this.getY() -y) < 4 && battleGround[x][y].structure != 2){
-        for(int i = 0; i<howManySelectedPlayer; i++){
-          if((selectedPlayer[i].x == x && selectedPlayer[i].y == y) && this.iD != i){
-            findOut =true;
+    if (x > -1 && y > -1 && x < battleGround.length && y < battleGround.length) {
+      if (abs(this.getX()-x) < 4 && abs(this.getY() -y) < 4 ) {
+        if (battleGround[x][y].structure != 2 || (this.getX() == x && this.getY() == y)) {
+          for (int i = 0; i<howManySelectedPlayer; i++) {
+            if ((selectedPlayer[i].x == x && selectedPlayer[i].y == y) && this.iD != i && selectedPlayer[i].live) {
+              findOut =true;
+            }
           }
         }
       }
